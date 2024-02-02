@@ -2,7 +2,15 @@ import sys
 
 
 def process_file(path):
-    print(path)
+    with open(path) as f:
+        # line = f.readline().rstrip()
+        v = []
+        for line in f:
+            p = line.rstrip().split(".")
+            for i in p:
+                if len(i) > 0:
+                    v.append(i)
+        print(v)
 
 
 def main():
