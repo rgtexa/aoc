@@ -1,7 +1,8 @@
-import sys
-import functools
+import sys, math
+
 
 def process_file(file):
+    sum = 0
     alpha = {
         "zero": 0,
         "one": 1,
@@ -14,39 +15,60 @@ def process_file(file):
         "eight": 8,
         "nine": 9,
     }
-    print(file)
-    foundn = []
-    foundc = []
-    with open(file) as f:
-        #for line in f:
-        line = f.readline()
-        line = f.readline()
-        line = f.readline()
-        print(line.rstrip())
-        for c in line:
-            if c.isnumeric():
-                foundn.append(c)
-        fc = []
-        for char in alpha:
-            res = [i for i in range(len(line)) if line.startswith(char, i)]
-            if len(res) > 0:
-                for i in range(0, len(res)):
-                    fc.append(char)
-        for i in fc:
-            foundc.append(str(alpha[i]))
-        #foundc.append(alpha[l])
-    print(foundn)
-    print(foundc)
 
+    with open(file) as f:
+        for line in f:
+            foundn = {}
+            foundc = {}
+            for c in line:
+                res = [i for i in range(len(line)) if line.startswith(c, i)]
+                if len(res) > 0 and c.isnumeric():
+                    fn = []
+                    for i in range(0, len(res)):
+                        fn.append(res[i])
+                    foundn[c] = fn
+            for char in alpha:
+                res = [i for i in range(len(line)) if line.startswith(char, i)]
+                if len(res) > 0:
+                    fc = []
+                    for i in range(0, len(res)):
+                        fc.append(res[i])
+                    foundc[str(alpha[char])] = fc
+            sum += find_first_last(foundn, foundc)
+    print(sum)
+
+
+def find_first_last(nl, cl):
+    low = float(math.inf)
+    high = float(-math.inf)
+    found_low = found_high = 0
+    for n, i in nl.items():
+        for j in i:
+            if j <= low:
+                low = j
+                found_low = n
+            if j >= high:
+                high = j
+                found_high = n
+    for c, i in cl.items():
+        for j in i:
+            if j <= low:
+                low = j
+                found_low = c
+            if j >= high:
+                high = j
+                found_high = c
+    return int(f"{found_low}{found_high}")
 
 
 def main():
     args = sys.argv[1:]
     if len(args) < 1:
-        print(f'Usage: {sys.argv[0]} file_to_process')
+        print(f"Usage: {sys.argv[0]} file_to_process")
     else:
         file = args[0]
         process_file(file)
+
 
 if __name__ == "__main__":
     main()
